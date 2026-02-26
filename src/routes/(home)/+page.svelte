@@ -1,5 +1,9 @@
 <script>
   import WALL7 from "$lib/img/manage/70.jpg";
+  import WALL7_ALT from "$lib/img/manage/7.jpg";
+  import WALL10 from "$lib/img/manage/10.jpg";
+  import WALL11 from "$lib/img/manage/11.png";
+  import WALL14 from "$lib/img/manage/14.jpg";
   import CheckAll from "svelte-material-icons/CheckAll.svelte";
   import MapMarkerRadius from "svelte-material-icons/MapMarkerRadius.svelte";
   import Cellphone from "svelte-material-icons/Cellphone.svelte";
@@ -17,7 +21,36 @@
   import ContactForm from '../Components/ContactForm.svelte';
   import { useForm } from "svelte-use-form";
 
+  const heroCards = [
+    {
+      image: Mountain1,
+      titleKey: "hero.section.planning",
+      href: "/management-service",
+      btnHover: "navy"
+    },
+    {
+      image: Mountain2,
+      titleKey: "hero.section.consultant",
+      href: "/consulting-service",
+      btnHover: "seagreen"
+    },
+    {
+      image: Mountain3,
+      titleKey: "hero.section.iotSales",
+      href: "/iot-service",
+      btnHover: "palevioletred"
+    },
+    {
+      image: Mountain4,
+      titleKey: "photography_planning",
+      href: "/homestay-photographing",
+      btnHover: "rgb(81, 178, 235)"
+    }
+  ];
+
   let isContactVisible = false;
+  let heroVideo;
+  let isVideoMuted = false;
 
   if (browser) {
 	  isContactVisible = window?.location?.hash === '#contact';
@@ -44,6 +77,31 @@
 			window.removeEventListener('hashchange', handleHashChange);
 		};
 	});
+
+  onMount(() => {
+    if (!heroVideo) return;
+    const playAttempt = heroVideo.play();
+    if (playAttempt && typeof playAttempt.catch === "function") {
+      playAttempt.catch(() => {
+        isVideoMuted = true;
+        heroVideo.muted = true;
+        heroVideo.play().catch(() => {});
+      });
+    }
+  });
+
+  function toggleVideoAudio(event) {
+    event.preventDefault();
+    if (!heroVideo) return;
+    if (isVideoMuted) {
+      isVideoMuted = false;
+      heroVideo.muted = false;
+      heroVideo.play().catch(() => {});
+      return;
+    }
+    isVideoMuted = true;
+    heroVideo.muted = true;
+  }
 
   if (browser) {
     // @ts-ignore
@@ -96,48 +154,33 @@
 
 
 <section id="hero" class=" section module">
-	<video autoplay loop muted playsinline class="hero-video">
+	<video bind:this={heroVideo} autoplay muted={isVideoMuted} playsinline loop class="hero-video">
 		<source src={backgroundVideo} type="video/mp4" />
 	  </video>
+    <button class="hero-audio-toggle" type="button" on:click={toggleVideoAudio}>
+      {isVideoMuted ? "Muted" : "Mute"}
+    </button>
 
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-				<div class="card my-5">
-					<img src={Mountain1} class="card-img-top" alt="...">
-					<h5 class="card-title text-light">
-            {$trans("hero.section.planning")}
-					</h5>
-					<a href="/management-service" class="btn btn-light">Link</a>
-				</div>
-			</div>
-			<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-				<div class="card my-5">
-					<img src={Mountain2} class="card-img-top" alt="...">
-					<h5 class="card-title text-light">
-            {$trans("hero.section.consultant")}
-					</h5>
-					<a href="/consulting-service" class="btn btn-light">Link</a>
-				</div>
-			</div>
-			<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-				<div class="card my-5">
-					<img src={Mountain3} alt="...">
-					<h5 class="card-title text-light">
-            {$trans("hero.section.iotSales")}
-					</h5>
-					<a href="/iot-service" class="btn btn-light">Link</a>
-				</div>
-			</div>
-			<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-				<div class="card my-5">
-					<img src={Mountain4} alt="...">
-					<h5 class="card-title text-light">
-            {$trans("photography_planning")}
-					</h5>
-					<a href="/homestay-photographing" class="btn btn-light">Link</a>
-				</div>
-			</div>
+	<div class="hero-banner" aria-label="Hero services banner">
+		<div class="hero-track">
+      <div class="hero-group">
+        {#each heroCards as card}
+          <div class="hero-card card" style={`--btn-hover: ${card.btnHover};`}>
+            <img src={card.image} class="card-img-top" alt={$trans(card.titleKey)} />
+            <h5 class="card-title text-light">{$trans(card.titleKey)}</h5>
+            <a href={card.href} class="btn btn-light">Link</a>
+          </div>
+        {/each}
+      </div>
+      <div class="hero-group" aria-hidden="true">
+        {#each heroCards as card}
+          <div class="hero-card card" style={`--btn-hover: ${card.btnHover};`}>
+            <img src={card.image} class="card-img-top" alt={$trans(card.titleKey)} />
+            <h5 class="card-title text-light">{$trans(card.titleKey)}</h5>
+            <a href={card.href} class="btn btn-light" tabindex="-1">Link</a>
+          </div>
+        {/each}
+      </div>
 		</div>
 	</div>
 </section>
@@ -147,7 +190,13 @@
   <div class="container" data-aos="fade-up" data-aos-delay="100">
     <div class="row gy-4">
       <div class="col-lg-6 order-1 order-lg-2">
-        <img src={WALL7} class="img-fluid" alt="" />
+        <div class="about-image-rotator">
+          <img src={WALL7} class="img-fluid" alt="LodgeGeek showcase image 1" />
+          <img src={WALL7_ALT} class="img-fluid" alt="LodgeGeek showcase image 2" />
+          <img src={WALL10} class="img-fluid" alt="LodgeGeek showcase image 3" />
+          <img src={WALL11} class="img-fluid" alt="LodgeGeek showcase image 4" />
+          <img src={WALL14} class="img-fluid" alt="LodgeGeek showcase image 5" />
+        </div>
       </div>
       <div class="col-lg-6 order-2 order-lg-1 content">
         <h3>About Us</h3>
@@ -369,15 +418,54 @@
 
   .hero-video {
     position: absolute;
-    left: 0;
-    right: 0;
-    /* top: 0; */
-    /* bottom: 0; */
-    /* z-index: -1; */
-    /* width: 100vw; */
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-top: 160px;
-    /* height: 300px; */
+  }
+
+  .hero-audio-toggle {
+    position: fixed;
+    top: 84px;
+    right: 20px;
+    z-index: 1100;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(17, 17, 17, 0.75);
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    animation: hero-audio-pulse 2.2s ease-in-out infinite;
+  }
+
+  .hero-audio-toggle:hover {
+    background: rgba(17, 17, 17, 0.9);
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+  }
+
+  .hero-audio-toggle:focus-visible {
+    outline: 2px solid #ffc451;
+    outline-offset: 2px;
+  }
+
+  @keyframes hero-audio-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-audio-toggle {
+      top: 76px;
+      right: 16px;
+    }
   }
 
   .module, .module-small {
@@ -412,9 +500,122 @@ section
   margin-top:5rem;
 }
 
-.card 
+#hero {
+  --hero-video-height: clamp(680px, 90vh, 980px);
+  --hero-banner-shift: 23px;
+  --hero-banner-space: 0px;
+  position: relative;
+  padding: 0 0 var(--hero-banner-space);
+  margin-top: 0;
+  height: var(--hero-video-height);
+  overflow: visible;
+}
+
+.about-image-rotator {
+  display: grid;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  aspect-ratio: 4 / 3;
+}
+
+.about-image-rotator img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: about-rotate 17.5s infinite;
+  transition: transform 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.about-image-rotator img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.about-image-rotator img:nth-child(2) {
+  animation-delay: 3.5s;
+}
+
+.about-image-rotator img:nth-child(3) {
+  animation-delay: 7s;
+}
+
+.about-image-rotator img:nth-child(4) {
+  animation-delay: 10.5s;
+}
+
+.about-image-rotator img:nth-child(5) {
+  animation-delay: 14s;
+}
+
+.about-image-rotator:hover img {
+  transform: scale(1.03);
+}
+
+@keyframes about-rotate {
+  0% {
+    opacity: 0;
+  }
+  2.86% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  22.86% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero-banner {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin-top: 0;
+  transform: translateY(var(--hero-banner-shift));
+  overflow-x: hidden;
+  overflow-y: visible;
+  width: 100%;
+  padding: 0 2rem 48px;
+}
+
+.hero-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: hero-marquee 72s linear infinite;
+}
+
+.hero-group {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+  flex-shrink: 0;
+}
+
+.hero-banner:hover .hero-track {
+  animation-play-state: paused;
+}
+
+@keyframes hero-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-card
 {
-margin-top:5%;
   -webkit-transition: all .2s ease-out;
 -moz-transition: all .2s ease-out;
 -ms-transition: all .2s ease-out;
@@ -423,16 +624,22 @@ margin-top:5%;
 border-radius:15px;
 border:none;
   background-color:white;
+  flex: 0 0 auto;
+  width: clamp(156px, 18.2vw, 273px);
+  height: clamp(104px, 13vw, 156px);
+  position: relative;
+  margin: 0;
+  overflow: visible;
 }
 
 
-.btn 
+.hero-card .btn 
 {
 opacity:0;  
 position:absolute;
 left:50%;
-top: 110%;
- transform: translate(-50%, -50%);
+bottom: 0;
+transform: translate(-50%, 50%);
  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0);
 -webkit-transition: all .2s ease-out;
 -moz-transition: all .2s ease-out;
@@ -443,22 +650,23 @@ border-radius: 10px;
 padding:0.8rem 1.7rem;
 border:none;
 font-weight:bold;
+z-index: 5;
 }
 
-.card:hover .btn
+.hero-card:hover .btn
 {
 opacity:1;
-top: 100%;
+bottom: 0;
  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
 }
 
-.card:hover
+.hero-card:hover
 {
 box-shadow: 0 4px 18px 0 rgba(0,0,0,0.7);
 
 }
 
-h5{
+.hero-card h5{
 	position: absolute;
 	left:50%;
 	top: 50%;
@@ -474,37 +682,19 @@ h5{
   font-family: var(--default-font);
 }
 
-.card:hover h5{
+.hero-card:hover h5{
 	opacity:1;
   font-size: 1.5rem;
 }
 
-.btn:hover 
+.hero-card .btn:hover 
 {
 	color:white;
 	border:none;
+  background-color: var(--btn-hover);
 }
 
-div.col-12:nth-child(1) > .card:nth-child(1) > .btn:nth-child(3):hover
-{
-background-color:Navy;
-}
-
-div.col-12:nth-child(2) > .card:nth-child(1) > .btn:nth-child(3):hover
-{
-  background-color:SeaGreen;
-}
-
-div.col-12:nth-child(3) > .card:nth-child(1) > .btn:nth-child(3):hover
-{
-  background-color: PaleVioletRed;
-}
-div.col-12:nth-child(4) > .card:nth-child(1) > .btn:nth-child(3):hover
-{
-  background-color: rgb(81, 178, 235);
-}
-
-.card img
+.hero-card img
 {
 filter:blur(0px);
   -webkit-transition: all .2s ease-out;
@@ -513,9 +703,13 @@ filter:blur(0px);
 -o-transition: all .2s ease-out;
  transition: all .2s ease-out;
 border-radius:15px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.card:hover img{
+.hero-card:hover img{
 	filter:blur(3px);
 }
 
@@ -525,6 +719,7 @@ border-radius:15px;
     .hero-video {
       margin-top: 0px;
       top: 0;
+      transform: none;
     }
 
 
@@ -536,8 +731,8 @@ border-radius:15px;
   @media only screen and (min-width: 768px) {
     .hero-video {
       bottom: 0;
-      width: 100vw;
-      margin-top: 160px;
+      width: 100%;
+      margin-top: 0;
     }
   }
 </style>

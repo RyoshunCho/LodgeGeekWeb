@@ -9,6 +9,8 @@
   import Camera from "svelte-material-icons/Camera.svelte"
 
 	let mobileMenuOpen = false;
+  let showReservationNote = false;
+  let reservationTimer;
 
   function mobileClick() {
     if (mobileMenuOpen==true) {
@@ -27,6 +29,17 @@
     } else {
       mobileActiveMenu = menu;
     }
+  }
+
+  function handleReservationClick(event) {
+    event.preventDefault();
+    showReservationNote = true;
+    if (reservationTimer) {
+      clearTimeout(reservationTimer);
+    }
+    reservationTimer = setTimeout(() => {
+      showReservationNote = false;
+    }, 2000);
   }
 
 </script>
@@ -63,6 +76,13 @@
           <!-- <li><a href="/#portfolio" on:click={()=>{mobileClick()}}>{$trans("memu.title.portfolio")}</a></li> -->
           <!-- <li><a href="#team">Team</a></li> -->
           <li><a href="/#contact" on:click={()=>{mobileClick()}}>{$trans("memu.title.contact")}</a></li>
+          <!-- svelte-ignore a11y-invalid-attribute -->
+          <li class="reservation-link">
+            <a href="javascript:void(0)" on:click={(event)=>{mobileClick(); handleReservationClick(event);}}>Reservation</a>
+            {#if showReservationNote}
+              <span class="reservation-note">Coming Soon!</span>
+            {/if}
+          </li>
           <li class="dropdown">
             <a href="#" on:click={()=>{mobileMenuDropdown("language")}} class="{mobileActiveMenu=="language"?"active":""}">
               <TranslateVariant color="{mobileMenuOpen==true?"#212529":"white"}" width=24 height=24/>
@@ -129,6 +149,27 @@
   .menu_icon{
       display: none;
     }
+
+  .reservation-link {
+    position: relative;
+  }
+
+  .reservation-note {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(17, 17, 17, 0.95);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    z-index: 1000;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  }
 
   
   @media (max-width: 767px) {
