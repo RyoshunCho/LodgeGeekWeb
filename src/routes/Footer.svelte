@@ -68,8 +68,9 @@
                   <img src="{WECHATQR}" alt="Wechat QR Code" class="qr-code-img"/>
                 </div>
               </div>
-              <!-- svelte-ignore a11y-invalid-attribute -->
-              <a href="javascript:void(0)"><Instagram color="white" width=36 height=36/></a>
+              <a href="https://www.instagram.com/qiqi_house_tokyo?igsh=cWhndmljaHp3cmcy" target="_blank" rel="noreferrer">
+                <Instagram color="white" width=36 height=36/>
+              </a>
               <a href="https://wa.link/nydnxe" target="_blank"><Whatsapp color="white" width=36 height=36/></a>
               <!-- <Tooltip tip="WechatId:<br/>dinzzz<br/>" top color="coral">
                 <a href="javascript:void(0)"><img src="{WECHAT}" style="width: 36px;height:36px" alt="" /></a>
